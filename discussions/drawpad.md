@@ -1,0 +1,1 @@
+drawpad is a react native based app which we can use to sketching, note taking, drawing etc. it also gives a local url any device in the same wifi can use that to open it browser, the person drawing can use this app as drawing pad to see the sketches on the connected devices. one can save those sketches too.
