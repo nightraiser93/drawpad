@@ -9,3 +9,12 @@ export interface Stroke {
   strokeWidth: number;
   points: Point[];
 }
+
+export interface SketchSummary {
+  id: string;
+  createdAt: number;
+}
+
+export interface SavedSketch extends SketchSummary {
+  strokes: Stroke[];
+}
