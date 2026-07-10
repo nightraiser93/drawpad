@@ -1,0 +1,56 @@
+import { useRef, useState } from 'react';
+import { Alert, SafeAreaView, StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { DrawingCanvas, DrawingCanvasHandle } from './src/DrawingCanvas';
+import { Toolbar } from './src/Toolbar';
+import { saveSketchToGallery } from './src/saveSketch';
+
+export default function App() {
+  const canvasRef = useRef<DrawingCanvasHandle>(null);
+  const [color, setColor] = useState('#111111');
+  const [strokeWidth, setStrokeWidth] = useState(4);
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    const image = canvasRef.current?.snapshot();
+    if (!image) {
+      Alert.alert('Nothing to save', 'Draw something first.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await saveSketchToGallery(image);
+      Alert.alert('Saved', 'Sketch saved to your photo library.');
+    } catch (err) {
+      Alert.alert('Save failed', err instanceof Error ? err.message : String(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <GestureHandlerRootView style={styles.root}>
+      <SafeAreaView style={styles.root}>
+        <DrawingCanvas ref={canvasRef} color={color} strokeWidth={strokeWidth} />
+        <Toolbar
+          color={color}
+          onColorChange={setColor}
+          strokeWidth={strokeWidth}
+          onStrokeWidthChange={setStrokeWidth}
+          onClear={() => canvasRef.current?.clear()}
+          onSave={handleSave}
+          saving={saving}
+        />
+        <StatusBar style="auto" />
+      </SafeAreaView>
+    </GestureHandlerRootView>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+});
