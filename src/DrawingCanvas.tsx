@@ -9,6 +9,8 @@ import type { StrokeEvent } from './server/strokeEvents';
 export interface DrawingCanvasHandle {
   clear: () => void;
   snapshot: () => SkImage | null;
+  getStrokes: () => Stroke[];
+  loadStrokes: (strokes: Stroke[]) => void;
 }
 
 interface DrawingCanvasProps {
@@ -34,9 +36,29 @@ export const DrawingCanvas = forwardRef<DrawingCanvasHandle, DrawingCanvasProps>
     useImperativeHandle(ref, () => ({
       clear: () => {
         setStrokes([]);
+        setActiveStroke(null);
         onStrokeEvent?.({ type: 'clear' });
       },
       snapshot: () => canvasRef.current?.makeImageSnapshot() ?? null,
+      getStrokes: () => strokes,
+      loadStrokes: (loaded) => {
+        setStrokes(loaded);
+        setActiveStroke(null);
+        onStrokeEvent?.({ type: 'clear' });
+        for (const stroke of loaded) {
+          onStrokeEvent?.({
+            type: 'strokeStart',
+            id: stroke.id,
+            color: stroke.color,
+            strokeWidth: stroke.strokeWidth,
+            point: stroke.points[0] ?? { x: 0, y: 0 },
+          });
+          for (const point of stroke.points.slice(1)) {
+            onStrokeEvent?.({ type: 'strokePoint', id: stroke.id, point });
+          }
+          onStrokeEvent?.({ type: 'strokeEnd', id: stroke.id });
+        }
+      },
     }));
 
     const pan = Gesture.Pan()
