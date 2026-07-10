@@ -7,9 +7,11 @@ import { Toolbar } from './src/Toolbar';
 import { LiveViewBanner } from './src/LiveViewBanner';
 import { saveSketchToGallery } from './src/saveSketch';
 import { useLanServer } from './src/useLanServer';
+import type { Tool } from './src/types';
 
 export default function App() {
   const canvasRef = useRef<DrawingCanvasHandle>(null);
+  const [tool, setTool] = useState<Tool>('pen');
   const [color, setColor] = useState('#111111');
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [saving, setSaving] = useState(false);
@@ -38,11 +40,14 @@ export default function App() {
       <SafeAreaView style={styles.root}>
         <DrawingCanvas
           ref={canvasRef}
+          tool={tool}
           color={color}
           strokeWidth={strokeWidth}
           onStrokeEvent={broadcastStroke}
         />
         <Toolbar
+          tool={tool}
+          onToolChange={setTool}
           color={color}
           onColorChange={setColor}
           strokeWidth={strokeWidth}
