@@ -11,6 +11,7 @@ interface ToolbarProps {
   onClear: () => void;
   onSave: () => void;
   saving: boolean;
+  onShowLiveView: () => void;
 }
 
 export function Toolbar({
@@ -21,6 +22,7 @@ export function Toolbar({
   onClear,
   onSave,
   saving,
+  onShowLiveView,
 }: ToolbarProps) {
   return (
     <View style={styles.container}>
@@ -56,6 +58,9 @@ export function Toolbar({
         ))}
       </View>
       <View style={styles.row}>
+        <Pressable onPress={onShowLiveView} style={styles.actionButton}>
+          <Text style={styles.actionText}>Live</Text>
+        </Pressable>
         <Pressable onPress={onClear} style={styles.actionButton}>
           <Text style={styles.actionText}>Clear</Text>
         </Pressable>
