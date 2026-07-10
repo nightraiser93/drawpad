@@ -9,7 +9,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSPhotoLibraryAddUsageDescription": "Drawpad saves your sketches to your photo library."
+        "NSPhotoLibraryAddUsageDescription": "Drawpad saves your sketches to your photo library.",
+        "NSLocalNetworkUsageDescription": "Drawpad hosts a local web page so other devices on your wifi can watch your sketch live."
       }
     },
     "android": {

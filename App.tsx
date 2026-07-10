@@ -4,13 +4,17 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DrawingCanvas, DrawingCanvasHandle } from './src/DrawingCanvas';
 import { Toolbar } from './src/Toolbar';
+import { LiveViewBanner } from './src/LiveViewBanner';
 import { saveSketchToGallery } from './src/saveSketch';
+import { useLanServer } from './src/useLanServer';
 
 export default function App() {
   const canvasRef = useRef<DrawingCanvasHandle>(null);
   const [color, setColor] = useState('#111111');
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [saving, setSaving] = useState(false);
+  const [showLiveView, setShowLiveView] = useState(false);
+  const { url, broadcastStroke } = useLanServer();
 
   const handleSave = async () => {
     const image = canvasRef.current?.snapshot();
@@ -32,7 +36,12 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaView style={styles.root}>
-        <DrawingCanvas ref={canvasRef} color={color} strokeWidth={strokeWidth} />
+        <DrawingCanvas
+          ref={canvasRef}
+          color={color}
+          strokeWidth={strokeWidth}
+          onStrokeEvent={broadcastStroke}
+        />
         <Toolbar
           color={color}
           onColorChange={setColor}
@@ -41,6 +50,12 @@ export default function App() {
           onClear={() => canvasRef.current?.clear()}
           onSave={handleSave}
           saving={saving}
+          onShowLiveView={() => setShowLiveView(true)}
+        />
+        <LiveViewBanner
+          url={url}
+          visible={showLiveView}
+          onDismiss={() => setShowLiveView(false)}
         />
         <StatusBar style="auto" />
       </SafeAreaView>
